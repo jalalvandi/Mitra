@@ -5,7 +5,7 @@
 
 [package]
 name = "mitra"
-version = "1.1.0"
+version = "2.1.0"
 edition = "2024"
 description = "A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the robust parsidate"
 license = "Apache-2.0"
