@@ -10,6 +10,8 @@ Mitra allows you to perform common date/time operations directly from your termi
 
 *   **Current Time:** Display the current Parsi date and time.
 *   **Date/Time Arithmetic:** Add or subtract years, months, days, hours, minutes, or seconds from a given Parsi date/time. Handles day clamping and leap year adjustments correctly.
+*   **Month View:** Displays a monthly Parsi calendar, similar to `ncal`.
+*   **Event Listing:** List holidays and occasions for a specific Parsi date (`events`).
 *   **Formatting:** Format Parsi dates and times using predefined styles (`short`, `long`, `iso`) or custom `strftime`-like patterns.
 *   **Conversion:**
     *   Convert Parsi dates/times to Gregorian.
@@ -394,12 +396,73 @@ mitra parse "1403-5-6" --pattern "%Y-%m-%d"
 # Output: Error: Parse error while parsing date with explicit format: could not parse number, required digits mismatch, or value out of range
 ```
 
+---
+### `cal`
+
+Displays a monthly Parsi calendar, similar to `ncal`, with options for specifying the month and year. If omitted, the current month is shown. Includes indicators for days with events: `*` for holidays, `+` for other occasions.
+
+**Usage:**
+
+```bash
+mitra cal [MONTH [YEAR]]
+```
+
+**Examples:**
+
+```bash
+# Display calendar for the current month
+mitra cal
+
+# Display calendar for Farvardin 1403
+mitra cal 1 1403
+
+# Display calendar for Esfand 1399 (leap year)
+mitra cal 12 1399
+```
+
+### `events`
+
+Lists the holidays and other occasions recorded for a specific Parsi date. Data is based on the included events.json file.
+
+**Usage:**
+
+```bash
+mitra events <DATE_STRING>
+```
+
+**Examples:**
+
+```bash
+# List events for Nowruz (Farvardin 1st)
+mitra events 1403/01/01
+# Example Output:
+# Events for 01 Farvardin:
+#   [تعطیل] آغاز نوروز
+#   - جشن نوروز، نوروز جمشیدی (جمشید پیشدادی) - ابتدای بهار
+
+
+# List events for a day with a non-holiday occasion
+mitra events 1403/02/25
+# Example Output:
+# Events for 25 Ordibehesht:
+#   - روز پاسداشت زبان فارسی و بزرگداشت حکیم ابوالقاسم فردوسی
+#   - بزرگداشت استاد توس فردوسی بزرگ
+
+# Query a day with no specific events
+mitra events 1403/07/10
+# Example Output:
+# Events for 10 Mehr:
+#   - No events found.
+```
+
 ## Dependencies
 
 *   **[`parsidate`](https://crates.io/crates/parsidate):** The core Rust library providing Persian date logic.
 *   **[`clap`](https://crates.io/crates/clap):** For command-line argument parsing.
 *   **[`anyhow`](https://crates.io/crates/anyhow):** For flexible error handling.
 *   **[`chrono`](https://crates.io/crates/chrono):** Used internally by `parsidate` and for `Duration` handling.
+*   **[`serde`](https://crates.io/crates/serde) & [`serde_json`](https://crates.io/crates/serde_json):** For deserializing the event data from the embedded JSON file.
+*   **[`once_cell`](https://crates.io/crates/once_cell):** For lazy, static initialization of the event data, ensuring it's loaded only once.
 
 ## Contributing
 
@@ -411,5 +474,5 @@ This project is licensed under either of
 
 *   Apache License, Version 2.0, ([LICENSE-APACHE](./LICENSE).
 ```
-714b5631-87ad-4fde-905f-89dc149387f2
+21a25810-f359-483c-8d6d-adbe713d55e2
 ```

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-04-07
+
+### Added
+
+*   **New Command `cal`:** Display a monthly Parsi calendar similar to `ncal`, with options for month/year and indicators for days with events (`*` for holidays, `+` for others).
+*   **Event Data Handling:** Integrated JSON data (`src/data/events.json`) containing Persian calendar occasions. Data is loaded statically using `once_cell`. Added `events.rs` module to manage loading and querying.
+*   **New Command `events`:** Added `mitra events <DATE>` command to list holidays and occasions for the specified Parsi date. It retrieves data loaded from `events.json` and indicates official holidays.
+
 ## [1.1.0] - 2025-04-07
 
 ### Added
