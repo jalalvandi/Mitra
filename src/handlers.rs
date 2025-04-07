@@ -5,7 +5,7 @@
 //  * License : Apache-2.0
 //  * Version : 1.1.0
 //  * URL     : https://github.com/jalalvandi/Mitra
-//  * 714b5631-87ad-4fde-905f-89dc149387f2
+//  * 21a25810-f359-483c-8d6d-adbe713d55e2
 //
 //! Contains the core logic functions (handlers) for each CLI subcommand.
 
@@ -494,5 +494,43 @@ pub fn handle_parse(input_string: String, pattern: String) -> Result<()> {
             .map_err(|e| map_parsidate_error(e, "parsing date with explicit format"))?;
         println!("Parsed Date: {}", parsed_d); // Use default Display
     }
+    Ok(())
+}
+
+/// Handles the `events` command: Lists events for a specific date.
+pub fn handle_events(date_string: String) -> Result<()> {
+    // Parse the input date string (ignore time part)
+    let (pdt, _) = parse_input_datetime_or_date(&date_string)
+        .with_context(|| format!("Failed to parse date string: {}", date_string))?;
+
+    let month = pdt.month();
+    let day = pdt.day();
+
+    // Format the date for display (e.g., "6 مرداد")
+    let display_date = pdt.format("%d %B"); // Or "%A %d %B" for weekday
+
+    println!("Events for {}:", display_date);
+
+    // Get events for the parsed date
+    if let Some(events_list) = events::get_events_for_date(month, day) {
+        if events_list.is_empty() {
+            // This case shouldn't happen if get_events_for_date returns Some only when non-empty,
+            // but good to handle defensively.
+            println!("  - No events found.");
+        } else {
+            // Iterate and print each event title, marking holidays
+            for event in events_list {
+                let prefix = if event.holiday { "[تعطیل] " } else { "- " };
+                // Optional: Include event_type if desired:
+                // let prefix = if event.holiday { "[تعطیل] " } else { "" };
+                // println!("  - {} ({}) {}", prefix, event.event_type, event.title);
+                println!("  {}{}", prefix, event.title);
+            }
+        }
+    } else {
+        // If the date key wasn't found in the map
+        println!("  - No events found.");
+    }
+
     Ok(())
 }

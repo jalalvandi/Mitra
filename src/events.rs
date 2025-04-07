@@ -1,4 +1,12 @@
-//! src/events.rs
+//  ~/src/events.rs
+//
+//  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
+//  * Package : mitra
+//  * License : Apache-2.0
+//  * Version : 2.1.0
+//  * URL     : https://github.com/jalalvandi/Mitra
+//  * 21a25810-f359-483c-8d6d-adbe713d55e2
+//
 //! Handles loading and querying calendar event data.
 
 use once_cell::sync::Lazy;
@@ -74,7 +82,11 @@ pub fn get_event_indicator(month: u32, day: u32) -> Option<char> {
         }
     })
 }
-
+/// Returns a slice of Events for the given month and day, if any.
+pub fn get_events_for_date(month: u32, day: u32) -> Option<&'static Vec<Event>> {
+    // Directly return the reference from the static HashMap
+    EVENTS.get(&(month, day))
+}
 // Optional: Function to get all event titles for a specific day
 // pub fn get_event_titles(month: u32, day: u32) -> Option<Vec<String>> {
 //     EVENTS.get(&(month, day)).map(|events_for_day| {

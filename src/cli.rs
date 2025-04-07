@@ -3,13 +3,11 @@
 //  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
-//  * Version : 1.1.0
+//  * Version : 2.1.0
 //  * URL     : https://github.com/jalalvandi/Mitra
-//  * 714b5631-87ad-4fde-905f-89dc149387f2
+//  * 21a25810-f359-483c-8d6d-adbe713d55e2
 //
 //! Defines the command-line interface structure using clap.
-
-
 
 use clap::{Parser, Subcommand, ValueEnum};
 
@@ -158,7 +156,7 @@ pub enum Commands {
         #[arg(short, long)]
         pattern: String,
     },
-    
+
     /// Display a monthly Parsi calendar.
     /// If month and year are not provided, the current month is shown.
     Cal {
@@ -166,6 +164,11 @@ pub enum Commands {
         month: Option<u32>,
         /// Optional year (e.g., 1403). Requires month if specified.
         year: Option<i32>,
+    },
+    /// List events for a specific Parsi date.
+    Events {
+        /// The date to check for events (e.g., YYYY/MM/DD, YYYY-MM-DD).
+        date_string: String,
     },
 }
 

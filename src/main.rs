@@ -5,7 +5,7 @@
 //  * License : Apache-2.0
 //  * Version : 1.1.0
 //  * URL     : https://github.com/jalalvandi/Mitra
-//  * 714b5631-87ad-4fde-905f-89dc149387f2
+//  * 21a25810-f359-483c-8d6d-adbe713d55e2
 //
 //! Main entry point for the mitra-cli application.
 //! It parses command-line arguments and dispatches to the appropriate handler function.
@@ -71,5 +71,9 @@ fn main() -> Result<()> {
         }) => handlers::handle_parse(input_string, pattern),
         Some(Commands::Cal { month, year }) => handlers::handle_cal(month, year),
         None => handlers::handle_now(), // Default action if no subcommand is specified
+        Some(Commands::Cal { month, year }) => handlers::handle_cal(month, year),
+        // Add the new command handler call
+        Some(Commands::Events { date_string }) => handlers::handle_events(date_string),
+        None => handlers::handle_now(),
     }
 }
