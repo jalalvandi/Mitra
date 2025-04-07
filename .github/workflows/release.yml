@@ -1,0 +1,180 @@
+# .github/workflows/release.yml
+name: Create Release Binaries
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+permissions:
+  contents: write
+
+env:
+  BINARY_NAME: mitra
+  CARGO_TERM_COLOR: always
+
+jobs:
+  create_release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_version: ${{ env.VERSION }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: get_version
+        run: |
+          VERSION_NUMBER=${GITHUB_REF#refs/tags/v}
+          echo "Extracted version: $VERSION_NUMBER"
+          echo "VERSION=${VERSION_NUMBER}" >> $GITHUB_ENV
+
+      - name: Extract Release Notes from CHANGELOG.md
+        id: release_notes
+        shell: bash
+        run: |
+          if [ ! -f CHANGELOG.md ]; then
+            echo "ERROR: CHANGELOG.md not found!" >&2
+            NOTES="**Error:** CHANGELOG.md not found. Please refer to the commit history."
+            NOTES="${NOTES//'%'/'%25'}"
+            NOTES="${NOTES//$'\n'/'%0A'}"
+            NOTES="${NOTES//$'\r'/'%0D'}"
+            echo "NOTES=${NOTES}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Extracting notes for version ${{ env.VERSION }} from CHANGELOG.md"
+
+          NOTES=$(awk -v ver="${{ env.VERSION }}" '
+            $0 == "## [" ver "]" || $0 ~ "## \\[" ver "\\] - [0-9]{4}-[0-9]{2}-[0-9]{2}" {
+              in_section = 1
+              next
+            }
+            $0 ~ /^## \[/ && in_section {
+              exit
+            }
+            in_section {
+              print
+            }
+          ' CHANGELOG.md)
+
+          if [ -z "$NOTES" ]; then
+            echo "Warning: No notes found for version ${{ env.VERSION }} (check if the version exists in CHANGELOG.md)." >&2
+            NOTES="See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/v${{ env.VERSION }}/CHANGELOG.md) for full details."
+          fi
+
+          NOTES=$(printf '%s' "$NOTES" | sed 's/[[:space:]]*$//')
+
+          NOTES="${NOTES//'%'/'%25'}"
+          NOTES="${NOTES//$'\n'/'%0A'}"
+          NOTES="${NOTES//$'\r'/'%0D'}"
+          echo "NOTES=${NOTES}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ env.VERSION }}
+          body: ${{ steps.release_notes.outputs.NOTES }}
+          draft: false
+          prerelease: ${{ contains(github.ref, '-') }}
+
+  build_binaries:
+    name: Build Binaries (${{ matrix.target }})
+    needs: create_release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            use_cross: true
+            archive_suffix: tar.gz
+            archive_cmd: tar czf
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            use_cross: false
+            archive_suffix: tar.gz
+            archive_cmd: tar czf
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            use_cross: false
+            archive_suffix: tar.gz
+            archive_cmd: tar czf
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            use_cross: false
+            archive_suffix: tar.gz
+            archive_cmd: tar czf
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain (stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: ${{ matrix.target }}
+
+      - name: Setup cross-compilation tools (Linux/musl)
+        if: matrix.use_cross && matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+
+      - name: Cache Cargo Dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}-${{ matrix.os }}-stable
+
+      - name: Build binary for target (${{ matrix.target }})
+        shell: bash
+        run: |
+          if [[ "${{ matrix.target }}" == "x86_64-unknown-linux-musl" ]]; then
+            RUSTFLAGS='-C target-feature=+crt-static' cargo build --release --target ${{ matrix.target }} --verbose
+          else
+            cargo build --release --target ${{ matrix.target }} --verbose
+          fi
+
+      - name: Prepare Artifact Details
+        id: prepare_artifact
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            BIN_PATH="target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}.exe"
+            BIN_NAME="${{ env.BINARY_NAME }}.exe"
+          else
+            BIN_PATH="target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}"
+            BIN_NAME="${{ env.BINARY_NAME }}"
+          fi
+          ARTIFACT_FILENAME="${{ env.BINARY_NAME }}-v${{ needs.create_release.outputs.release_version }}-${{ matrix.target }}.${{ matrix.archive_suffix }}"
+          echo "BIN_PATH=${BIN_PATH}" >> $GITHUB_ENV
+          echo "BIN_NAME=${BIN_NAME}" >> $GITHUB_ENV
+          echo "ARTIFACT_FILENAME=${ARTIFACT_FILENAME}" >> $GITHUB_ENV
+
+      - name: Archive binary artifact (using tar)
+        shell: bash
+        run: |
+          cd $(dirname "${{ env.BIN_PATH }}")
+          ${{ matrix.archive_cmd }} ../../../${{ env.ARTIFACT_FILENAME }} "${{ env.BIN_NAME }}"
+          cd ../../..
+          ls -l ${{ env.ARTIFACT_FILENAME }}
+
+      - name: Upload Release Asset (${{ matrix.target }})
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./${{ env.ARTIFACT_FILENAME }}
+          asset_name: ${{ env.ARTIFACT_FILENAME }}
+          asset_content_type: application/gzip
