@@ -3,7 +3,7 @@
 //  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
-//  * Version : 1.1.0
+//  * Version : 2.1.0
 //  * URL     : https://github.com/jalalvandi/Mitra
 //  * 21a25810-f359-483c-8d6d-adbe713d55e2
 //

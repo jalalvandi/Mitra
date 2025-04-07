@@ -3,13 +3,12 @@
 //  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
-//  * Version : 1.1.0
+//  * Version : 2.1.0
 //  * URL     : https://github.com/jalalvandi/Mitra
 //  * 714b5631-87ad-4fde-905f-89dc149387f2
 //
 //! Contains utility functions used by command handlers, such as parsing input strings,
 //! printing results consistently, and mapping errors.
-
 
 use anyhow::{Result, anyhow, bail};
 use parsidate::{DateError, ParseErrorKind, ParsiDate, ParsiDateTime};
