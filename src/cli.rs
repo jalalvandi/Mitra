@@ -9,6 +9,8 @@
 //
 //! Defines the command-line interface structure using clap.
 
+
+
 use clap::{Parser, Subcommand, ValueEnum};
 
 // Top-level CLI arguments structure
@@ -155,6 +157,15 @@ pub enum Commands {
         /// The explicit format pattern to use for parsing (e.g., "%Y/%m/%d %H:%M").
         #[arg(short, long)]
         pattern: String,
+    },
+    
+    /// Display a monthly Parsi calendar.
+    /// If month and year are not provided, the current month is shown.
+    Cal {
+        /// Optional month (1-12).
+        month: Option<u32>,
+        /// Optional year (e.g., 1403). Requires month if specified.
+        year: Option<i32>,
     },
 }
 

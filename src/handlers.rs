@@ -9,6 +9,8 @@
 //
 //! Contains the core logic functions (handlers) for each CLI subcommand.
 
+
+
 use crate::cli::FormatStyle; // Import needed items from sibling modules
 use crate::utils::{map_parsidate_error, parse_input_datetime_or_date, print_result};
 use anyhow::{Context, Result, bail};
@@ -24,6 +26,98 @@ pub fn handle_now() -> Result<()> {
     Ok(())
 }
 
+/// Handles the `cal` command: Displays a monthly Parsi calendar.
+pub fn handle_cal(month_opt: Option<u32>, year_opt: Option<i32>) -> Result<()> {
+    let today = ParsiDate::today().context("Failed to get today's date")?;
+    let year = year_opt.unwrap_or_else(|| today.year());
+
+    // Determine the month (validation remains the same)
+    let month = match month_opt {
+        Some(m) => {
+            if !(1..=12).contains(&m) {
+                bail!("Error: Month must be between 1 and 12.");
+            }
+            m
+        }
+        None => {
+            if year_opt.is_some() {
+                bail!("Error: Year cannot be specified without a month.");
+            }
+            today.month()
+        }
+    };
+
+    // Validate year/month by creating the first day
+    let first_day_of_month = ParsiDate::new(year, month, 1)
+        .map_err(|e| map_parsidate_error(e, "creating first day of target month"))?;
+
+    // --- Get Calendar Data ---
+    // Use the first day of the month object we already created
+    let month_name = first_day_of_month.format("%B"); // %B gives the full Persian month name
+
+    let days_in_month = ParsiDate::days_in_month(year, month);
+    if days_in_month == 0 {
+        bail!("Error: Could not determine days in month {}-{}", year, month);
+    }
+
+    // Get the weekday of the first day (0=Shanbeh, ..., 6=Jomeh)
+let first_weekday_name = first_day_of_month
+        .weekday() // Returns Result<String, DateError>
+        .map_err(|e| map_parsidate_error(e, "getting weekday name of first day"))?;
+
+    // Map the Persian weekday name to a number (Shanbeh=0, ..., Jomeh=6)
+    let first_weekday: u32 = match first_weekday_name.as_str() {
+        "شنبه" => 0,
+        "یکشنبه" => 1,
+        "دوشنبه" => 2,
+        "سه‌شنبه" => 3, 
+        "چهارشنبه" => 4,
+        "پنج‌شنبه" => 5, 
+        "جمعه" => 6,
+        _ => {
+            // This case should ideally not happen if parsidate returns valid names
+            bail!(
+                "Error: Unexpected weekday name returned: {}",
+                first_weekday_name
+            );
+        }
+    };
+
+    // --- Print Calendar ---
+
+    let header = format!("{} {}", month_name, year);
+    println!("{:^20}", header); // Center in 20 chars (adjust width if needed)
+
+    println!(" Sh Ye Do Se Ch Pa Jo");
+
+    // Print leading spaces
+    print!("{:width$}", "", width = (first_weekday * 3) as usize);
+
+    let current_day = if year == today.year() && month == today.month() {
+        Some(today.day())
+    } else {
+        None
+    };
+
+    // Print the days of the month
+    for day in 1..=days_in_month {
+        let is_today = current_day == Some(day);
+        let start_highlight = if is_today { "\x1b[7m" } else { "" }; // Start reverse video
+        let end_highlight = if is_today { "\x1b[0m" } else { "" };  // Reset formatting
+
+        print!("{}{:>2}{}", start_highlight, day, end_highlight);
+
+        let current_weekday = (first_weekday + day - 1) % 7;
+
+        if current_weekday == 6 || day == days_in_month {
+            println!();
+        } else {
+            print!(" ");
+        }
+    }
+
+    Ok(())
+}
 /// Handles the `add` command: Adds a specified duration to a base date/datetime.
 pub fn handle_add(
     base_dt_str: String,
