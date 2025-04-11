@@ -3,9 +3,9 @@
 //  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
-//  * Version : 2.1.0
+//  * Version : 2.2.0
 //  * URL     : https://github.com/jalalvandi/Mitra
-//  * 21a25810-f359-483c-8d6d-adbe713d55e2
+//  * Sign: mitra-20250412-bb54068aea85-656d1cd95639e412f55fa197c609b120
 //
 //! Main entry point for the mitra-cli application.
 //! It parses command-line arguments and dispatches to the appropriate handler function.
@@ -71,9 +71,7 @@ fn main() -> Result<()> {
         }) => handlers::handle_parse(input_string, pattern),
         Some(Commands::Cal { month, year }) => handlers::handle_cal(month, year),
         None => handlers::handle_now(), // Default action if no subcommand is specified
-        Some(Commands::Cal { month, year }) => handlers::handle_cal(month, year),
         // Add the new command handler call
         Some(Commands::Events { date_string }) => handlers::handle_events(date_string),
-        None => handlers::handle_now(),
     }
 }

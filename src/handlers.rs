@@ -3,9 +3,9 @@
 //  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
-//  * Version : 2.1.0
+//  * Version : 2.2.0
 //  * URL     : https://github.com/jalalvandi/Mitra
-//  * 21a25810-f359-483c-8d6d-adbe713d55e2
+//  * Sign: mitra-20250412-bb54068aea85-656d1cd95639e412f55fa197c609b120
 //
 //! Contains the core logic functions (handlers) for each CLI subcommand.
 
@@ -97,7 +97,7 @@ pub fn handle_cal(month_opt: Option<u32>, year_opt: Option<i32>) -> Result<()> {
     for day in 1..=days_in_month {
         let is_today = current_day_num == Some(day);
         // Get event indicator ('*', '+', or None)
-        let event_indicator = events::get_event_indicator(month, day);
+        let event_indicator = events::get_event_indicator(year, month, day);
 
         // Determine highlighting and indicator character
         let start_highlight = if is_today { "\x1b[7m" } else { "" }; // Reverse video for today
@@ -380,9 +380,8 @@ pub fn handle_from_gregorian(gregorian_dt_str: String) -> Result<()> {
     let gregorian_ndt = chrono::NaiveDateTime::parse_from_str(trimmed_input, "%Y-%m-%d %H:%M:%S")
         .or_else(|_| chrono::NaiveDateTime::parse_from_str(trimmed_input, "%Y-%m-%dT%H:%M:%S"))
         .or_else(|_| chrono::NaiveDateTime::parse_from_str(trimmed_input, "%Y/%m/%d %H:%M:%S"))
-        .map(|ndt| {
+        .inspect(|_ndt| {
             was_datetime = true; // Successfully parsed as DateTime
-            ndt
         })
         .or_else(|_| {
             // If DateTime parsing fails, try parsing as NaiveDate.
@@ -505,14 +504,14 @@ pub fn handle_events(date_string: String) -> Result<()> {
 
     let month = pdt.month();
     let day = pdt.day();
-
+    let year = pdt.year();
     // Format the date for display (e.g., "6 مرداد")
     let display_date = pdt.format("%d %B"); // Or "%A %d %B" for weekday
 
     println!("Events for {}:", display_date);
 
     // Get events for the parsed date
-    if let Some(events_list) = events::get_events_for_date(month, day) {
+    if let Some(events_list) = events::get_events_for_date(year, month, day) {
         if events_list.is_empty() {
             // This case shouldn't happen if get_events_for_date returns Some only when non-empty,
             // but good to handle defensively.
