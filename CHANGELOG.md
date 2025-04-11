@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-04-12
+
+### Added
+
+* support for Hijri events mapping in events.json, including a new key for "hijri_events_mapping".
+
+### Changed
+
+* Enhanced event structure to include optional Hijri month and day fields.
+* Refactored event loading logic to separate fixed Persian events and mapped Hijri events.
+* Improved error handling for JSON parsing in event loading.
+* Updated event indicator and retrieval functions to accommodate new event structure.
+* Adjusted command handlers to utilize updated event retrieval functions.
+
 ## [2.1.0] - 2025-04-07
 
 ### Added
