@@ -1,0 +1,9 @@
+CREDITS
+
+This project uses the `events.json` file for displaying Persian calendar events. This file was meticulously prepared and generously shared for free by [Persian Calendar team]. I am deeply grateful for their efforts and contribution.
+
+Source:
+Main file: [https://github.com/persian-calendar/persian-calendar/blob/main/PersianCalendar/data/events.json]
+Persian Calendar: [https://github.com/persian-calendar]
+Iran: [https://calendar.ut.ac.ir/documents/2139738/7092644/Calendar-1404.pdf]
+AncientIran: [https://raw.githubusercontent.com/ilius/starcal/master/plugins/iran-ancient-data.txt]
