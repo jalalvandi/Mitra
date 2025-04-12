@@ -81,7 +81,7 @@ pub fn handle_cal(month_opt: Option<u32>, year_opt: Option<i32>) -> Result<()> {
     let header = format!("{} {}", month_name, year);
     println!("----------------------------");
     println!("{:^width$}", header, width = total_width);
-    println!("");
+    println!();
     // Print English weekday names header
     // Each name takes 2 chars + 2 spaces = 4 chars
     println!(" Sa  Su  Mo  Tu  We  Th  Fr");
@@ -135,7 +135,7 @@ pub fn handle_cal(month_opt: Option<u32>, year_opt: Option<i32>) -> Result<()> {
     // Add some spacing before the legend
     println!("----------------------------");
     println!("\n*: Holiday  +: Other Event");
-    println!("");
+    println!();
 
     Ok(())
 }
