@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Note on Versioning
+
+This changelog only documents major and minor version updates. Patch versions and minor fixes are not included here to maintain focus on significant changes and new features. For detailed patch-level changes, please refer to the commit history.
+
 ## [2.2.0] - 2025-04-12
 
 ### Added
