@@ -472,7 +472,7 @@ Contributions (bug reports, feature requests, pull requests) are welcome! Please
 
 This project is licensed under either of
 
-*   Apache License, Version 2.0, ([LICENSE-APACHE](./LICENSE).
+*   Apache License, Version 2.0, ([LICENSE](./LICENSE)).
 ```
 Version: 2.2.1
 Sign: mitra-20250413-807aa3a3c537-3ea6e1ecf4d95369d274d372595c8d3b
