@@ -77,16 +77,21 @@ pub fn handle_cal(month_opt: Option<u32>, year_opt: Option<i32>) -> Result<()> {
     };
 
     // --- Print Calendar ---
+    let total_width = 36;
     let header = format!("{} {}", month_name, year);
-    // Adjust width slightly for potential indicator (e.g., 3 chars per day + space) = 28 total
-    let total_width = 28;
+    println!("----------------------------");
     println!("{:^width$}", header, width = total_width);
-    println!(" Sh Ye Do Se Ch Pa Jo"); // 2 chars + 1 space = 3 per day, 7*3 + 6 spaces = 27, maybe adjust
+    println!("");
+    // Print English weekday names header
+    // Each name takes 2 chars + 2 spaces = 4 chars
+    println!(" Sa  Su  Mo  Tu  We  Th  Fr");
 
-    // Print leading spaces (3 chars per day)
-    let padding = (first_weekday * 3) as usize;
+    // Print leading spaces for the first week
+    // Each day slot takes 4 characters
+    let padding = (first_weekday * 4) as usize;
     print!("{:width$}", "", width = padding);
 
+    // Check if the displayed month is the current month for highlighting today
     let current_day_num = if year == today.year() && month == today.month() {
         Some(today.day())
     } else {
@@ -96,32 +101,41 @@ pub fn handle_cal(month_opt: Option<u32>, year_opt: Option<i32>) -> Result<()> {
     // Print the days of the month
     for day in 1..=days_in_month {
         let is_today = current_day_num == Some(day);
-        // Get event indicator ('*', '+', or None)
+        // Get event indicator ('*', '+', or None) for the specific year
         let event_indicator = events::get_event_indicator(year, month, day);
 
-        // Determine highlighting and indicator character
-        let start_highlight = if is_today { "\x1b[7m" } else { "" }; // Reverse video for today
+        // Formatting for highlighting today
+        let start_highlight = if is_today { "\x1b[7m" } else { "" }; // Start reverse video
         let end_highlight = if is_today { "\x1b[0m" } else { "" }; // Reset formatting
-        // Use the event indicator if present, otherwise a space
+
+        // Get the character to print after the day number
         let indicator_char = event_indicator.unwrap_or(' ');
 
-        // Print: HighlightStart Day Indicator HighlightEnd
-        // Day is right-aligned in 2 spaces. Indicator takes 1 char. Total 3 chars.
+        // Print the day cell: HighlightStart DayNumber Indicator HighlightEnd
+        // Pad the number to 2 spaces (right aligned), add indicator, total 3 chars used
+        // Add one trailing space for a total width of 4 characters per cell.
         print!(
-            "{}{:>2}{}{}",
+            "{}{:>2}{} {}",
             start_highlight, day, indicator_char, end_highlight
         );
+        // Note the space ^^^ added after end_highlight
 
+        // Calculate current weekday (0-6) to handle line breaks
         let current_weekday = (first_weekday + day - 1) % 7;
 
+        // If it's Friday (weekday 6) or the last day of the month, print a newline
         if current_weekday == 6 || day == days_in_month {
-            println!(); // Newline at the end of the week or month
+            println!();
         } else {
-            // No extra space needed, print takes 3 chars already
+            // No extra space needed between cells due to the space added in the print! above
         }
     }
-    // Optional: Add a legend for indicators at the bottom
+
+    // Print the legend for event indicators
+    // Add some spacing before the legend
+    println!("----------------------------");
     println!("\n*: Holiday  +: Other Event");
+    println!("");
 
     Ok(())
 }
