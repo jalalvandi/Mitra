@@ -3,9 +3,9 @@
 //  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
-//  * Version : 2.2.0
+//  * Version : 2.2.1
 //  * URL     : https://github.com/jalalvandi/Mitra
-//  * Sign: mitra-20250412-bb54068aea85-656d1cd95639e412f55fa197c609b120
+//  * Sign: mitra-20250413-807aa3a3c537-3ea6e1ecf4d95369d274d372595c8d3b
 //
 //! Contains the core logic functions (handlers) for each CLI subcommand.
 

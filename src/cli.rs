@@ -3,9 +3,9 @@
 //  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
-//  * Version : 2.2.0
+//  * Version : 2.2.1
 //  * URL     : https://github.com/jalalvandi/Mitra
-//  * Sign: mitra-20250412-bb54068aea85-656d1cd95639e412f55fa197c609b120
+//  * Sign: mitra-20250413-807aa3a3c537-3ea6e1ecf4d95369d274d372595c8d3b
 //
 //! Defines the command-line interface structure using clap.
 
@@ -15,7 +15,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 #[derive(Parser, Debug)]
 #[command(
     author = "Sina Jalalvandi <jalalvandi.sina@gmail.com>",
-    version = "1.1.0",
+    version = "2.2.1",
     about = "Mitra: A CLI tool for Persian (Jalali/Shamsi) date operations.",
     long_about = "Provides various functionalities for working with ParsiDate dates and datetimes, including conversion, arithmetic, formatting, and information retrieval."
 )]
