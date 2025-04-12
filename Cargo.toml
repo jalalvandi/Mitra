@@ -1,10 +1,10 @@
 #  * Cargo.toml
 #  * Copyright (C) Mohammad (Sina) Jalalvandi (parsidate) 2024-2025 <jalalvandi.sina@gmail.com>
-#  * Sign: mitra-20250412-bb54068aea85-656d1cd95639e412f55fa197c609b120
+#  * Sign: mitra-20250413-807aa3a3c537-3ea6e1ecf4d95369d274d372595c8d3b
 
 [package]
 name = "mitra"
-version = "2.2.0"
+version = "2.2.1"
 edition = "2024"
 description = "A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the robust parsidate"
 license = "Apache-2.0"
