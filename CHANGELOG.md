@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Note on Versioning
 
-This changelog only documents major and minor version updates. Patch versions and minor fixes are not included here to maintain focus on significant changes and new features. For detailed patch-level changes, please refer to the commit history.
+This changelog only documents major and minor version updates. Patch versions and minor fixes are not included here to maintain focus on significant changes and new features. For detailed patch-level changes, please refer to the commit history or release notes.
 
 ## [2.2.0] - 2025-04-12
 
