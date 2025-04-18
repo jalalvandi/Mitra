@@ -160,10 +160,25 @@ pub enum Commands {
     /// Display a monthly Parsi calendar.
     /// If month and year are not provided, the current month is shown.
     Cal {
-        /// Optional month (1-12).
+        /// Optional month (1-12) to display.
+        #[arg(conflicts_with_all = ["three", "show_year"])]
+        // Cannot specify month with -3 or -y
         month: Option<u32>,
-        /// Optional year (e.g., 1403). Requires month if specified.
+
+        /// Optional year (e.g., 1403). Requires month if specified,
+        /// unless --show-year is also used.
+        #[arg(conflicts_with = "three")]
+        // Cannot specify year with -3 (year for -y is separate)
         year: Option<i32>,
+
+        /// Display three months: previous, current, and next.
+        /// Defaults to current month/year if month/year are not applicable.
+        #[arg(short = '3', long, conflicts_with_all = ["month", "show_year"])]
+        three: bool,
+
+        /// Display the calendar for the entire specified year.
+        #[arg(short = 'y', long = "year", value_name = "YEAR", conflicts_with_all = ["month", "three"])]
+        show_year: Option<i32>, // Takes the year as an argument
     },
     /// List events for a specific Parsi date.
     Events {

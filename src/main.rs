@@ -69,9 +69,13 @@ fn main() -> Result<()> {
             input_string,
             pattern,
         }) => handlers::handle_parse(input_string, pattern),
-        Some(Commands::Cal { month, year }) => handlers::handle_cal(month, year),
-        None => handlers::handle_now(), // Default action if no subcommand is specified
-        // Add the new command handler call
+        Some(Commands::Cal {
+            month,
+            year,
+            three,
+            show_year,
+        }) => handlers::handle_cal(month, year, three, show_year),
         Some(Commands::Events { date_string }) => handlers::handle_events(date_string),
+        None => handlers::handle_now(),
     }
 }

@@ -15,6 +15,118 @@ use crate::utils::{map_parsidate_error, parse_input_datetime_or_date, print_resu
 use anyhow::{Context, Result, bail};
 use chrono::Duration; // Use chrono::Duration for time arithmetic
 use parsidate::{ParsiDate, ParsiDateTime};
+use std::collections::VecDeque;
+
+// --- Helper Function to Generate Calendar Lines for a Single Month ---
+
+/// Generates the lines of text representing a single month's calendar grid.
+/// Returns a Vec<String>, where each string is a line (header, weekdays, days).
+/// Includes event indicators and today highlighting.
+fn generate_month_lines(year: i32, month: u32, today: &ParsiDate) -> Result<Vec<String>> {
+    // --- Width Configuration ---
+    // Let's use 3 chars per day (e.g., " 5*") + 1 space separator = 4 chars per cell
+    // Total width = 7 days * 4 chars/day - 1 trailing space = 27 chars
+    let day_width = 2; // Width for the day number (e.g., " 5", "23")
+    let indicator_width = 1; // Width for the event indicator ('*', '+', ' ')
+    let cell_padding = 1; // Space after the cell
+    let cell_width = day_width + indicator_width + cell_padding; // e.g., 2 + 1 + 1 = 4
+    let total_width = (7 * cell_width) - cell_padding; // Subtract last padding: 7 * 4 - 1 = 27
+
+    let mut lines: Vec<String> = Vec::with_capacity(8); // Header, weekdays, max 6 weeks
+
+    // Validate month and create first day
+    if !(1..=12).contains(&month) {
+        return Ok(vec![format!("Invalid Month: {}", month)]);
+    }
+    let first_day_of_month = ParsiDate::new(year, month, 1)
+        .map_err(|e| map_parsidate_error(e, &format!("creating date {}-{}-1", year, month)))?;
+
+    // Get month name
+    let month_name = first_day_of_month.format("%B");
+
+    // Get first weekday (0=Sat, 6=Fri)
+    let first_weekday_name = first_day_of_month.weekday().map_err(|e| {
+        map_parsidate_error(e, &format!("getting weekday for {}-{}-1", year, month))
+    })?;
+    let first_weekday: u32 = match first_weekday_name.as_str() {
+        "شنبه" => 0,
+        "یکشنبه" => 1,
+        "دوشنبه" => 2,
+        "سه‌شنبه" => 3,
+        "چهارشنبه" => 4,
+        "پنجشنبه" => 5,
+        "جمعه" => 6,
+        _ => bail!("Unexpected weekday name: {}", first_weekday_name),
+    };
+
+    let days_in_month = ParsiDate::days_in_month(year, month);
+    if days_in_month == 0 {
+        return Ok(vec![format!("Invalid days for {}-{}", year, month)]);
+    }
+
+    // --- Build Lines ---
+
+    // Header Line (Month Year) - Centered in the new total_width
+    let header = format!("{} {}", month_name, year);
+    lines.push(format!("{:^width$}", header, width = total_width));
+
+    // Weekday Names Line - Using 3-letter English abbreviations
+    // Each abbreviation takes 3 chars. Need padding to match cell_width (4). Add 1 space.
+    lines.push(" Sat Sun Mon Tue Wed Thu Fri".to_string()); // 7 * 3 chars + 6 spaces = 27 width
+    // Alternative Persian: "  ش  ی  د  س  چ  پ  ج" (adjust spacing)
+
+    // Days Lines
+    let mut current_line = String::with_capacity(total_width);
+    // Add padding for the first week based on cell_width
+    current_line.push_str(&" ".repeat((first_weekday * cell_width as u32) as usize));
+
+    let is_current_month_year = year == today.year() && month == today.month();
+    let today_day_num = if is_current_month_year {
+        Some(today.day())
+    } else {
+        None
+    };
+
+    for day in 1..=days_in_month {
+        let is_today = today_day_num == Some(day);
+        let event_indicator = events::get_event_indicator(year, month, day).unwrap_or(' ');
+
+        let start_highlight = if is_today { "\x1b[7m" } else { "" }; // Reverse video
+        let end_highlight = if is_today { "\x1b[0m" } else { "" }; // Reset
+
+        // Format: HighlightStart Day(width) Indicator HighlightEnd Padding
+        current_line.push_str(&format!(
+            "{}{:width$}{}{}{}", // Day number right-aligned in `day_width`
+            start_highlight,
+            day,
+            event_indicator,
+            end_highlight,
+            " ".repeat(cell_padding), // Add padding after the cell
+            width = day_width
+        ));
+
+        let current_weekday = (first_weekday + day - 1) % 7;
+
+        if current_weekday == 6 || day == days_in_month {
+            // End of week or end of month, push the current line (trim trailing space and pad right)
+            lines.push(format!(
+                "{:<width$}",
+                current_line.trim_end(),
+                width = total_width
+            ));
+            current_line.clear(); // Start new line
+        }
+        // No "else { print!(" ") }" needed as padding is part of the cell format now
+    }
+
+    // Ensure all months have the same number of lines (e.g., 8 lines total) for alignment
+    let empty_line = " ".repeat(total_width);
+    while lines.len() < 8 {
+        lines.push(empty_line.clone()); // Pad with empty lines of correct width
+    }
+
+    Ok(lines)
+}
 
 // --- Command Handler Functions ---
 
@@ -26,119 +138,131 @@ pub fn handle_now() -> Result<()> {
 }
 
 /// Handles the `cal` command: Displays a monthly Parsi calendar.
-pub fn handle_cal(month_opt: Option<u32>, year_opt: Option<i32>) -> Result<()> {
+pub fn handle_cal(
+    month_opt: Option<u32>,
+    year_opt: Option<i32>, // Year for single month view
+    three_months: bool,
+    year_to_show_opt: Option<i32>, // Year for full year view (-y)
+) -> Result<()> {
     let today = ParsiDate::today().context("Failed to get today's date")?;
-    let year = year_opt.unwrap_or_else(|| today.year());
 
-    // Determine the month
-    let month = match month_opt {
-        Some(m) => {
-            if !(1..=12).contains(&m) {
+    // --- Determine Mode and Target Date(s) ---
+
+    if let Some(year_to_show) = year_to_show_opt {
+        // === Full Year Mode ===
+        println!("{:^64}", year_to_show); // Center year title over roughly 3 months width
+
+        let mut month_lines: Vec<VecDeque<String>> = Vec::with_capacity(12);
+        for m in 1..=12 {
+            let lines = generate_month_lines(year_to_show, m, &today)?;
+            month_lines.push(lines.into()); // Convert Vec<String> to VecDeque for easy pop_front
+        }
+
+        // Print months in 3 columns, 4 rows
+        for _row in 0..4 {
+            // Find the max number of lines needed for this row (usually 8)
+            let max_lines = (0..3)
+                .filter_map(|col_idx| month_lines.get(col_idx))
+                .map(|dq| dq.len())
+                .max()
+                .unwrap_or(0);
+
+            for _line_idx in 0..max_lines {
+                let mut row_line = String::new();
+                for col_idx in 0..3 {
+                    if let Some(month_deque) = month_lines.get_mut(col_idx) {
+                        // Pop line or use empty space if month deque is shorter
+                        let line = month_deque
+                            .pop_front()
+                            .unwrap_or_else(|| "                    ".to_string()); // Width 20
+                        row_line.push_str(&line);
+                        if col_idx < 2 {
+                            // Add spacing between months
+                            row_line.push_str("  ");
+                        }
+                    }
+                }
+                println!("{}", row_line);
+            }
+            // Remove the first 3 months for the next row
+            month_lines.drain(0..std::cmp::min(3, month_lines.len()));
+            if !month_lines.is_empty() {
+                println!(); // Add blank line between rows of months
+            }
+        }
+    } else if three_months {
+        // === Three Month Mode ===
+        let target_year = today.year();
+        let target_month = today.month();
+
+        // Calculate previous and next month/year
+        let (prev_year, prev_month) = if target_month == 1 {
+            (target_year - 1, 12)
+        } else {
+            (target_year, target_month - 1)
+        };
+        let (next_year, next_month) = if target_month == 12 {
+            (target_year + 1, 1)
+        } else {
+            (target_year, target_month + 1)
+        };
+
+        // Generate lines for all three months
+        let prev_lines = generate_month_lines(prev_year, prev_month, &today)?;
+        let current_lines = generate_month_lines(target_year, target_month, &today)?;
+        let next_lines = generate_month_lines(next_year, next_month, &today)?;
+
+        // Print side-by-side (assuming all Vecs have same length due to padding)
+        for i in 0..prev_lines.len() {
+            // Use length of first vec (should be 8)
+            // Format: PrevMonthLines  CurrentMonthLines  NextMonthLines
+            println!(
+                "{}  {}  {}",
+                prev_lines.get(i).map_or("", |s| s.as_str()), // Use get() for safety
+                current_lines.get(i).map_or("", |s| s.as_str()),
+                next_lines.get(i).map_or("", |s| s.as_str())
+            );
+        }
+    } else {
+        // === Single Month Mode ===
+
+        // --- Determine Target Year and Month ---
+        let target_year: i32;
+        let target_month: u32;
+
+        if let Some(month_num) = month_opt {
+            // Month was provided
+            target_month = month_num;
+            // Year is optional if month is provided, default to current year if needed
+            target_year = year_opt.unwrap_or_else(|| today.year());
+            // Validate month range (already done in generate_month_lines, but good here too)
+            if !(1..=12).contains(&target_month) {
                 bail!("Error: Month must be between 1 and 12.");
             }
-            m
-        }
-        None => {
-            if year_opt.is_some() {
-                bail!("Error: Year cannot be specified without a month.");
-            }
-            today.month()
-        }
-    };
-
-    // Validate year/month by creating the first day
-    let first_day_of_month = ParsiDate::new(year, month, 1)
-        .map_err(|e| map_parsidate_error(e, "creating first day of target month"))?;
-
-    // --- Get Calendar Data ---
-    let month_name = first_day_of_month.format("%B");
-    let days_in_month = ParsiDate::days_in_month(year, month);
-    if days_in_month == 0 {
-        bail!(
-            "Error: Could not determine days in month {}-{}",
-            year,
-            month
-        );
-    }
-
-    let first_weekday_name = first_day_of_month
-        .weekday()
-        .map_err(|e| map_parsidate_error(e, "getting weekday name of first day"))?;
-
-    let first_weekday: u32 = match first_weekday_name.as_str() {
-        "شنبه" => 0,
-        "یکشنبه" => 1,
-        "دوشنبه" => 2,
-        "سه‌شنبه" => 3,
-        "چهارشنبه" => 4,
-        "پنج‌شنبه" => 5,
-        "جمعه" => 6,
-        _ => bail!("Error: Unexpected weekday name: {}", first_weekday_name),
-    };
-
-    // --- Print Calendar ---
-    let total_width = 36;
-    let header = format!("{} {}", month_name, year);
-    println!("----------------------------");
-    println!("{:^width$}", header, width = total_width);
-    println!();
-    // Print English weekday names header
-    // Each name takes 2 chars + 2 spaces = 4 chars
-    println!(" Sa  Su  Mo  Tu  We  Th  Fr");
-
-    // Print leading spaces for the first week
-    // Each day slot takes 4 characters
-    let padding = (first_weekday * 4) as usize;
-    print!("{:width$}", "", width = padding);
-
-    // Check if the displayed month is the current month for highlighting today
-    let current_day_num = if year == today.year() && month == today.month() {
-        Some(today.day())
-    } else {
-        None
-    };
-
-    // Print the days of the month
-    for day in 1..=days_in_month {
-        let is_today = current_day_num == Some(day);
-        // Get event indicator ('*', '+', or None) for the specific year
-        let event_indicator = events::get_event_indicator(year, month, day);
-
-        // Formatting for highlighting today
-        let start_highlight = if is_today { "\x1b[7m" } else { "" }; // Start reverse video
-        let end_highlight = if is_today { "\x1b[0m" } else { "" }; // Reset formatting
-
-        // Get the character to print after the day number
-        let indicator_char = event_indicator.unwrap_or(' ');
-
-        // Print the day cell: HighlightStart DayNumber Indicator HighlightEnd
-        // Pad the number to 2 spaces (right aligned), add indicator, total 3 chars used
-        // Add one trailing space for a total width of 4 characters per cell.
-        print!(
-            "{}{:>2}{} {}",
-            start_highlight, day, indicator_char, end_highlight
-        );
-        // Note the space ^^^ added after end_highlight
-
-        // Calculate current weekday (0-6) to handle line breaks
-        let current_weekday = (first_weekday + day - 1) % 7;
-
-        // If it's Friday (weekday 6) or the last day of the month, print a newline
-        if current_weekday == 6 || day == days_in_month {
-            println!();
         } else {
-            // No extra space needed between cells due to the space added in the print! above
+            // Month was NOT provided
+            // If year was provided WITHOUT month, it's an error (clap should prevent, but double-check)
+            if year_opt.is_some() {
+                bail!("Error: Year cannot be specified without a month in single month mode.");
+            }
+            // Default to current month and year
+            target_month = today.month();
+            target_year = today.year();
         }
-    }
 
-    // Print the legend for event indicators
-    // Add some spacing before the legend
-    println!("----------------------------");
+        // --- Generate and Print ---
+        // Now that target_year and target_month are determined, generate lines
+        let lines = generate_month_lines(target_year, target_month, &today)?;
+        for line in lines {
+            println!("{}", line);
+        }
+    } // End of else block for single month mode
+
+    // Optional: Add legend for indicators
     println!("\n*: Holiday  +: Other Event");
-    println!();
 
     Ok(())
-}
+} // End of handle_cal function
 /// Handles the `add` command: Adds a specified duration to a base date/datetime.
 pub fn handle_add(
     base_dt_str: String,
