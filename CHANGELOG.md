@@ -9,19 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This changelog only documents major and minor version updates. Patch versions and minor fixes are not included here to maintain focus on significant changes and new features. For detailed patch-level changes, please refer to the commit history or release notes.
 
-## [2.2.0] - 2025-04-12
+## [2.3.0] - 2025-04-19
 
 ### Added
+*   **Calendar View Enhancements:**  
+    *   The `cal` command now supports displaying three-month(ex: cal -3 or cal -three) and full-year(ex: cal -y 1404 or cal --year 1406 ) calendar views in addition to the default single-month view.
 
-* support for Hijri events mapping in events.json, including a new key for "hijri_events_mapping".
 
-### Changed
+## [2.2.0] - 2025-04-12
 
-* Enhanced event structure to include optional Hijri month and day fields.
-* Refactored event loading logic to separate fixed Persian events and mapped Hijri events.
-* Improved error handling for JSON parsing in event loading.
-* Updated event indicator and retrieval functions to accommodate new event structure.
-* Adjusted command handlers to utilize updated event retrieval functions.
+*   **Hijri Event Support (Current Year Only):**
+    *   Modified event data structure (`events.json`, `events.rs`) to differentiate between fixed Persian events (`Persian Calendar` key) and Hijri events mapped to the current Shamsi reference year (`hijri_events_mapping` key).
+    *   Updated `events::get_events_for_date` and `events::get_event_indicator` logic to load both types of events but only include/display mapped Hijri events if the queried year matches the `persian_reference_year` specified in the JSON data.
+    *   This allows displaying religious holidays and occasions accurately for the current year, while preventing inaccurate display for past/future years until a full Hijri calculation or updated mapping is implemented. Fixed Persian events are always displayed.
+
+### Fixed
+
+*   Resolved JSON parsing errors related to trailing commas and missing/mismatched field names (`Persian Calendar`) by adjusting the `CalendarData` struct in `events.rs` using `serde(rename)` to match the expected JSON keys.
+*   Corrected logic in `events.rs` to properly separate and query fixed vs. mapped events based on the query year.
 
 ## [2.1.0] - 2025-04-07
 
