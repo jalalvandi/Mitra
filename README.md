@@ -404,7 +404,7 @@ Displays a monthly Parsi calendar, similar to `ncal`, with options for specifyin
 **Usage:**
 
 ```bash
-mitra cal [MONTH [YEAR]]
+mitra cal [MONTH] [YEAR]
 ```
 
 **Examples:**
@@ -418,6 +418,22 @@ mitra cal 1 1403
 
 # Display calendar for Esfand 1399 (leap year)
 mitra cal 12 1399
+```
+
+```bash
+mitra cal [OPTIONS]
+```
+
+**Examples:**
+
+```bash
+#Display calendar for 3 month
+mitra cal --three
+#or
+mitra cal -3
+
+#Display calendar for 1404 year
+mitra cal -y 1404
 ```
 
 ### `events`
@@ -474,6 +490,6 @@ This project is licensed under either of
 
 *   Apache License, Version 2.0, ([LICENSE](./LICENSE)).
 ```
-Version: 2.2.1
-Sign: mitra-20250413-807aa3a3c537-3ea6e1ecf4d95369d274d372595c8d3b
+Version: 2.3.0
+Sign: mitra-20250419-bd5fbe728fa2-5836b45f25d83501625cc5529193d5f0
 ```
