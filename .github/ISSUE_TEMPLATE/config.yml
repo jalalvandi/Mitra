@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Ask a question or discuss
+    url: https://github.com/jalalvandi/mitra/discussions
+    about: Use GitHub Discussions to ask questions or chat with the community.
+  - name: 📄 Read the contributing guide
+    url: https://github.com/jalalvandi/mitra/blob/main/CONTRIBUTING.md
+    about: Learn how to report bugs and contribute to ParsiDate.
+  - name: 📜 Read the changelog
+    url: https://github.com/jalalvandi/mitra/blob/master/CHANGELOG.md
