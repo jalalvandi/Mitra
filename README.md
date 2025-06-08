@@ -1,6 +1,8 @@
 # Mitra - Terminal Based Persian (Jalali) Date Tool
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg?style=flat-square)](./LICENSE)
+[![CI](https://github.com/jalalvandi/mitra/actions/workflows/ci.yml/badge.svg)](https://github.com/jalalvandi/mitra/actions/workflows/ci.yml)
+![Maintenance](https://img.shields.io/badge/maintained-actively-green)
 
 A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the robust [`parsidate`](https://crates.io/crates/parsidate) Rust library.
 
