@@ -1,5 +1,5 @@
 #  * Cargo.toml
-#  * Copyright (C) Mohammad (Sina) Jalalvandi (parsidate) 2024-2025 <jalalvandi.sina@gmail.com>
+#  * Copyright (C) Mohammad (Sina) Jalalvandi (mitra) 2024-2025 <jalalvandi.sina@gmail.com>
 #  * Sign: mitra-20250419-bd5fbe728fa2-5836b45f25d83501625cc5529193d5f0
 
 [package]
@@ -10,7 +10,7 @@ description = "A versatile command-line interface (CLI) tool for working with Pe
 license = "Apache-2.0"
 authors = ["Sina Jalalvandi <Jalalvandi.Sina@gmail.com>"] 
 readme = "README.md"
-repository = "https://github.com/jalalvandi/mitra"
+repository = "https://github.com/parsilab/mitra"
 
 [dependencies]
 parsidate = "1.4.0"

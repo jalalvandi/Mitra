@@ -3,9 +3,17 @@ name: Continuous Integration
 
 on:
   push:
-    branches: [ "main", "master" ] # Adjust branch names if needed
+    branches: [ "main", "master" ]
+    paths:
+      - '**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
   pull_request:
     branches: [ "main", "master" ]
+    paths:
+      - '**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -32,11 +40,9 @@ jobs:
 
   build_and_test:
     name: Build & Test
-    # *** FIX: Use the OS from the strategy matrix ***
     runs-on: ${{ matrix.os }}
     needs: [check_and_lint]
     strategy:
-      # Prevent cancelling all jobs if one OS fails
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -50,10 +56,8 @@ jobs:
         with:
           toolchain: ${{ matrix.rust }}
 
-      # Cache dependencies for faster builds - Use default settings
       - name: Cache Cargo Dependencies
         uses: Swatinem/rust-cache@v2
-        # No 'with:' block needed when using defaults
 
       - name: Build project
         run: cargo build --verbose

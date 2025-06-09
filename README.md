@@ -1,10 +1,10 @@
 # Mitra - Terminal Based Persian (Jalali) Date Tool
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg?style=flat-square)](./LICENSE)
-[![CI](https://github.com/jalalvandi/mitra/actions/workflows/ci.yml/badge.svg)](https://github.com/jalalvandi/mitra/actions/workflows/ci.yml)
+[![CI](https://github.com/parsilab/mitra/actions/workflows/ci.yml/badge.svg)](https://github.com/parsilab/mitra/actions/workflows/ci.yml)
 ![Maintenance](https://img.shields.io/badge/maintained-actively-green)
 
-A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the robust [`parsidate`](https://crates.io/crates/parsidate) Rust library.
+A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the zz [`parsidate`](https://crates.io/crates/parsidate) Rust library.
 
 Mitra allows you to perform common date/time operations directly from your terminal, including conversions, arithmetic, formatting, and retrieving detailed information.
 
@@ -34,7 +34,7 @@ Mitra allows you to perform common date/time operations directly from your termi
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/jalalvandi/mitra.git
+    git clone https://github.com/parsilab/mitra.git
     cd mitra
     ```
 2.  Build the release executable:

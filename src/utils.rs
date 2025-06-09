@@ -4,7 +4,7 @@
 //  * Package : mitra
 //  * License : Apache-2.0
 //  * Version : 2.3.0
-//  * URL     : https://github.com/jalalvandi/Mitra
+//  * URL     : https://github.com/parsilab/Mitra
 //  * Sign: mitra-20250419-bd5fbe728fa2-5836b45f25d83501625cc5529193d5f0
 //
 //! Contains utility functions used by command handlers, such as parsing input strings,
