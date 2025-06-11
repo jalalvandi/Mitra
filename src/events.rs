@@ -1,10 +1,10 @@
 //  ~/src/events.rs
 //
-//  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
+//  * Copyright (C) 2024–2025 Parsicore <parsicore.dev@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
 //  * Version : 2.3.0
-//  * URL     : https://github.com/parsilab/Mitra
+//  * URL     : https://github.com/parsicore/Mitra
 //  * Sign: mitra-20250419-bd5fbe728fa2-5836b45f25d83501625cc5529193d5f0
 //
 //! Handles loading, storing, and querying calendar event data.

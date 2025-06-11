@@ -1,10 +1,10 @@
 //  ~/src/cli.rs
 //
-//  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
+//  * Copyright (C) 2024–2025 Parsicore <parsicore.dev@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
 //  * Version : 2.3.0
-//  * URL     : https://github.com/parsilab/Mitra
+//  * URL     : https://github.com/parsicore/Mitra
 //  * Sign: mitra-20250419-bd5fbe728fa2-5836b45f25d83501625cc5529193d5f0
 //
 //! Defines the command-line interface structure using clap.
@@ -14,8 +14,8 @@ use clap::{Parser, Subcommand, ValueEnum};
 // Top-level CLI arguments structure
 #[derive(Parser, Debug)]
 #[command(
-    author = "Sina Jalalvandi <jalalvandi.sina@gmail.com>",
-    version = "2.2.1",
+    author = "parsicore <parsicore.dev@gmail.com>",
+    version = "2.3.0",
     about = "Mitra: A CLI tool for Persian (Jalali/Shamsi) date operations.",
     long_about = "Provides various functionalities for working with ParsiDate dates and datetimes, including conversion, arithmetic, formatting, and information retrieval."
 )]
@@ -104,7 +104,7 @@ pub enum Commands {
         style: Option<FormatStyle>,
 
         /// Use a custom format pattern (e.g., "%Y-%m-%d", "%A %d %B ساعت %T").
-        /// See parsidate docs for specifiers. Conflicts with --style.
+        /// See mitra docs for specifiers. Conflicts with --style.
         #[arg(short, long)]
         pattern: Option<String>,
     },

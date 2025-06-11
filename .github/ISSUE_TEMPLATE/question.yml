@@ -7,13 +7,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Got a question about Mitra?**
+        **Got a question about mitra?**
         Ask away! We'll do our best to answer.
   - type: textarea
     id: question
     attributes:
       label: What's your question?
-      placeholder: I'm not sure how to convert a date from...
+      placeholder: I'm not sure how to get province name...
     validations:
       required: true
   - type: input

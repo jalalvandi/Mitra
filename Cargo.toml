@@ -1,19 +1,19 @@
 #  * Cargo.toml
-#  * Copyright (C) Mohammad (Sina) Jalalvandi (mitra) 2024-2025 <jalalvandi.sina@gmail.com>
+#  * Copyright (C) 2024–2025 Parsicore <parsicore.dev@gmail.com>
 #  * Sign: mitra-20250419-bd5fbe728fa2-5836b45f25d83501625cc5529193d5f0
 
 [package]
 name = "mitra"
 version = "2.3.0"
 edition = "2024"
-description = "A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the robust parsidate"
+description = "A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the robust mitra"
 license = "Apache-2.0"
-authors = ["Sina Jalalvandi <Jalalvandi.Sina@gmail.com>"] 
+authors = ["parsicore <parsicore.dev@gmail.com>"]  
 readme = "README.md"
-repository = "https://github.com/parsilab/mitra"
+repository = "https://github.com/parsicore/mitra"
 
 [dependencies]
-parsidate = "1.4.0"
+mitra = "1.4.0"
 clap = { version = "4.5", features = ["derive"] }
 anyhow = "1.0"
 chrono = "0.4"

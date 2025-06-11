@@ -62,7 +62,7 @@ This changelog only documents major and minor version updates. Patch versions an
 
 ### Changed
 
-*   Improved error messages using `anyhow` and context mapping in `utils::map_parsidate_error`.
+*   Improved error messages using `anyhow` and context mapping in `utils::map_mitra_error`.
 *   Enhanced input parsing (`utils::parse_input_datetime_or_date`) to handle more common date/time formats automatically (including ISO 8601-like dates and T-separated datetimes).
 *   Standardized output printing using `utils::print_result` to show only date for date-only inputs.
 *   Updated `Cargo.toml` with description, license, and bumped version.

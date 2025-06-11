@@ -1,10 +1,10 @@
 # Mitra - Terminal Based Persian (Jalali) Date Tool
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg?style=flat-square)](./LICENSE)
-[![CI](https://github.com/parsilab/mitra/actions/workflows/ci.yml/badge.svg)](https://github.com/parsilab/mitra/actions/workflows/ci.yml)
+[![CI](https://github.com/parsicore/mitra/actions/workflows/ci.yml/badge.svg)](https://github.com/parsicore/mitra/actions/workflows/ci.yml)
 ![Maintenance](https://img.shields.io/badge/maintained-actively-green)
 
-A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the zz [`parsidate`](https://crates.io/crates/parsidate) Rust library.
+A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the zz [`mitra`](https://crates.io/crates/mitra) Rust library.
 
 Mitra allows you to perform common date/time operations directly from your terminal, including conversions, arithmetic, formatting, and retrieving detailed information.
 
@@ -22,7 +22,7 @@ Mitra allows you to perform common date/time operations directly from your termi
 *   **Validation:** Check if a Parsi year is a leap year.
 *   **Difference:** Calculate the difference in days between two Parsi dates.
 *   **Parsing:** Parse date/time strings using explicit format patterns.
-*   **Powered by `parsidate`:** Leverages the core logic and accuracy of the `parsidate` crate for all Persian calendar calculations.
+*   **Powered by `mitra`:** Leverages the core logic and accuracy of the `mitra` crate for all Persian calendar calculations.
 
 ## Installation
 
@@ -34,7 +34,7 @@ Mitra allows you to perform common date/time operations directly from your termi
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/parsilab/mitra.git
+    git clone https://github.com/parsicore/mitra.git
     cd mitra
     ```
 2.  Build the release executable:
@@ -183,7 +183,7 @@ mitra format <DATETIME_STRING> (--style <STYLE> | --pattern <PATTERN>)
 *   `long`: `D Month YYYY` (e.g., `6 مرداد 1403`, time is ignored)
 *   `iso`: `YYYY-MM-DD` (or `YYYY-MM-DDTHH:MM:SS` if input has time)
 
-**Pattern (`--pattern`):** Uses `strftime`-like specifiers (see `parsidate` docs or examples below).
+**Pattern (`--pattern`):** Uses `strftime`-like specifiers (see `mitra` docs or examples below).
 
 **Examples:**
 
@@ -313,7 +313,7 @@ mitra from-gregorian "1979-02-11"
 
 ### `is-leap`
 
-Checks if a given Parsi year is a leap year according to the common 33-year cycle approximation used by `parsidate`.
+Checks if a given Parsi year is a leap year according to the common 33-year cycle approximation used by `mitra`.
 
 **Usage:**
 
@@ -475,10 +475,10 @@ mitra events 1403/07/10
 
 ## Dependencies
 
-*   **[`parsidate`](https://crates.io/crates/parsidate):** The core Rust library providing Persian date logic.
+*   **[`mitra`](https://crates.io/crates/mitra):** The core Rust library providing Persian date logic.
 *   **[`clap`](https://crates.io/crates/clap):** For command-line argument parsing.
 *   **[`anyhow`](https://crates.io/crates/anyhow):** For flexible error handling.
-*   **[`chrono`](https://crates.io/crates/chrono):** Used internally by `parsidate` and for `Duration` handling.
+*   **[`chrono`](https://crates.io/crates/chrono):** Used internally by `mitra` and for `Duration` handling.
 *   **[`serde`](https://crates.io/crates/serde) & [`serde_json`](https://crates.io/crates/serde_json):** For deserializing the event data from the embedded JSON file.
 *   **[`once_cell`](https://crates.io/crates/once_cell):** For lazy, static initialization of the event data, ensuring it's loaded only once.
 

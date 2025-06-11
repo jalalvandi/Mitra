@@ -1,17 +1,17 @@
 //  ~/src/utils.rs
 //
-//  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
+//  * Copyright (C) 2024–2025 Parsicore <parsicore.dev@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
 //  * Version : 2.3.0
-//  * URL     : https://github.com/parsilab/Mitra
+//  * URL     : https://github.com/parsicore/Mitra
 //  * Sign: mitra-20250419-bd5fbe728fa2-5836b45f25d83501625cc5529193d5f0
 //
 //! Contains utility functions used by command handlers, such as parsing input strings,
 //! printing results consistently, and mapping errors.
 
 use anyhow::{Result, anyhow, bail};
-use parsidate::{DateError, ParseErrorKind, ParsiDate, ParsiDateTime};
+use mitra::{DateError, ParseErrorKind, ParsiDate, ParsiDateTime};
 
 /// Attempts to parse the input string first as a ParsiDateTime, then as a ParsiDate,
 /// trying common formats (slash-separated and ISO-like).
@@ -70,9 +70,9 @@ pub fn print_result(pdt: ParsiDateTime, was_datetime: bool) {
     }
 }
 
-/// Maps internal `parsidate::DateError` types to more user-friendly `anyhow::Error`
+/// Maps internal `mitra::DateError` types to more user-friendly `anyhow::Error`
 /// messages suitable for CLI output, providing context about the operation being performed.
-pub fn map_parsidate_error(err: DateError, context_msg: &str) -> anyhow::Error {
+pub fn map_mitra_error(err: DateError, context_msg: &str) -> anyhow::Error {
     let base_message = match err {
         DateError::ParseError(kind) => {
             // Provide specific messages for different parsing failures.

@@ -1,10 +1,18 @@
 blank_issues_enabled: false
+
 contact_links:
   - name: 💬 Ask a question or discuss
-    url: https://github.com/parsilab/mitra/discussions
+    url: https://github.com/parsicore/mitra/discussions
     about: Use GitHub Discussions to ask questions or chat with the community.
+
   - name: 📄 Read the contributing guide
-    url: https://github.com/parsilab/mitra/blob/main/CONTRIBUTING.md
-    about: Learn how to report bugs and contribute to ParsiDate.
+    url: https://github.com/parsicore/mitra/blob/main/CONTRIBUTING.md
+    about: Learn how to report bugs and contribute to mitra.
+
+  - name: 📖 Read the documentation
+    url: https://docs.rs/mitra/
+    about: Read the documentation for mitra.
+
   - name: 📜 Read the changelog
-    url: https://github.com/parsilab/mitra/blob/master/CHANGELOG.md
+    url: https://github.com/parsicore/mitra/blob/main/CHANGELOG.md
+    about: Stay up to date with new features and bug fixes.

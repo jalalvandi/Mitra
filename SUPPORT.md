@@ -1,33 +1,44 @@
 # Support Guide
 
-Thanks for using **Mitra**! We're here to help, but let's make sure you're going to the right place. 😊
+Thank you for using **mitra**! We’re happy to support your development journey.  
+Before reaching out, please review the resources below to get help efficiently.
+
+---
 
 ## 📚 Documentation
 
 Before opening an issue, please check out the official documentation:
 
+👉 [Mitra Documentation on docs.rs](https://docs.rs/mitra)
+
+---
+
 ## ❓ Ask a Question
 
-If you have a question or want to share an idea, use the GitHub Discussions:
+Have a question or want to share an idea? Use GitHub Discussions:
 
-👉 [Discussions](https://github.com/jalalvandi/mitra/discussions)
+👉 [Open a Discussion](https://github.com/parsicore/mitra/discussions)
+
+---
 
 ## 🐞 Found a Bug?
 
-If you're sure it's a bug and not a usage question, open an issue:
+If you're sure it's a bug and not a usage question, please open an issue:
 
-👉 [New Issue](https://github.com/jalalvandi/mitra/issues/new/choose)
+👉 [Report a Bug](https://github.com/parsicore/mitra/issues/new/choose)
 
-Please include as much detail as possible and a minimal reproducible example.
+Please include as much detail as possible, and provide a minimal reproducible example if possible.
+
+---
 
 ## 🛡️ Security Concerns?
 
-Found a security issue? Please do **not** open a public issue.
-Instead, contact us privately at:
+If you discover a security vulnerability, **do not** open a public issue.  
+Please report it privately via email:
 
-📧 `jalalvandi.sina@gmail.com`
+- Email: `parsicore.dev@gmail.com`
 
 ---
 
 Thanks again for being part of the community ❤️  
--Mitra Team
+— The **parsicore** Team

@@ -1,20 +1,20 @@
 //  ~/src/handlers.rs
 //
-//  * Copyright (C) Mohammad (Sina) Jalalvandi 2024-2025 <jalalvandi.sina@gmail.com>
+//  * Copyright (C) 2024–2025 Parsicore <parsicore.dev@gmail.com>
 //  * Package : mitra
 //  * License : Apache-2.0
 //  * Version : 2.3.0
-//  * URL     : https://github.com/parsilab/Mitra
+//  * URL     : https://github.com/parsicore/Mitra
 //  * Sign: mitra-20250419-bd5fbe728fa2-5836b45f25d83501625cc5529193d5f0
 //
 //! Contains the core logic functions (handlers) for each CLI subcommand.
 
 use crate::cli::FormatStyle; // Import needed items from sibling modules
 use crate::events;
-use crate::utils::{map_parsidate_error, parse_input_datetime_or_date, print_result};
+use crate::utils::{map_mitra_error, parse_input_datetime_or_date, print_result};
 use anyhow::{Context, Result, bail};
 use chrono::Duration; // Use chrono::Duration for time arithmetic
-use parsidate::{ParsiDate, ParsiDateTime};
+use mitra::{ParsiDate, ParsiDateTime};
 use std::collections::VecDeque;
 
 // --- Helper Function to Generate Calendar Lines for a Single Month ---
@@ -39,15 +39,15 @@ fn generate_month_lines(year: i32, month: u32, today: &ParsiDate) -> Result<Vec<
         return Ok(vec![format!("Invalid Month: {}", month)]);
     }
     let first_day_of_month = ParsiDate::new(year, month, 1)
-        .map_err(|e| map_parsidate_error(e, &format!("creating date {}-{}-1", year, month)))?;
+        .map_err(|e| map_mitra_error(e, &format!("creating date {}-{}-1", year, month)))?;
 
     // Get month name
     let month_name = first_day_of_month.format("%B");
 
     // Get first weekday (0=Sat, 6=Fri)
-    let first_weekday_name = first_day_of_month.weekday().map_err(|e| {
-        map_parsidate_error(e, &format!("getting weekday for {}-{}-1", year, month))
-    })?;
+    let first_weekday_name = first_day_of_month
+        .weekday()
+        .map_err(|e| map_mitra_error(e, &format!("getting weekday for {}-{}-1", year, month)))?;
     let first_weekday: u32 = match first_weekday_name.as_str() {
         "شنبه" => 0,
         "یکشنبه" => 1,
@@ -302,27 +302,27 @@ pub fn handle_add(
     let result_pdt = if let Some(d) = days {
         base_pdt
             .add_days(d)
-            .map_err(|e| map_parsidate_error(e, "adding days"))?
+            .map_err(|e| map_mitra_error(e, "adding days"))?
     } else if let Some(m) = months {
         base_pdt
             .add_months(m)
-            .map_err(|e| map_parsidate_error(e, "adding months"))?
+            .map_err(|e| map_mitra_error(e, "adding months"))?
     } else if let Some(y) = years {
         base_pdt
             .add_years(y)
-            .map_err(|e| map_parsidate_error(e, "adding years"))?
+            .map_err(|e| map_mitra_error(e, "adding years"))?
     } else if let Some(h) = hours {
         base_pdt
             .add_duration(Duration::hours(h))
-            .map_err(|e| map_parsidate_error(e, "adding hours"))?
+            .map_err(|e| map_mitra_error(e, "adding hours"))?
     } else if let Some(m) = minutes {
         base_pdt
             .add_duration(Duration::minutes(m))
-            .map_err(|e| map_parsidate_error(e, "adding minutes"))?
+            .map_err(|e| map_mitra_error(e, "adding minutes"))?
     } else if let Some(s) = seconds {
         base_pdt
             .add_duration(Duration::seconds(s))
-            .map_err(|e| map_parsidate_error(e, "adding seconds"))?
+            .map_err(|e| map_mitra_error(e, "adding seconds"))?
     } else {
         unreachable!("Logic error: No duration unit found.");
     };
@@ -371,15 +371,15 @@ pub fn handle_sub(
     let result_pdt = if let Some(d) = days {
         base_pdt
             .sub_days(d)
-            .map_err(|e| map_parsidate_error(e, "subtracting days"))?
+            .map_err(|e| map_mitra_error(e, "subtracting days"))?
     } else if let Some(m) = months {
         base_pdt
             .sub_months(m)
-            .map_err(|e| map_parsidate_error(e, "subtracting months"))?
+            .map_err(|e| map_mitra_error(e, "subtracting months"))?
     } else if let Some(y) = years {
         base_pdt
             .sub_years(y)
-            .map_err(|e| map_parsidate_error(e, "subtracting years"))?
+            .map_err(|e| map_mitra_error(e, "subtracting years"))?
     } else if let Some(h) = hours {
         // Convert u64 to i64 for Duration constructor
         let h_i64 = h
@@ -387,21 +387,21 @@ pub fn handle_sub(
             .context("Hour value too large for subtraction")?;
         base_pdt
             .sub_duration(Duration::hours(h_i64))
-            .map_err(|e| map_parsidate_error(e, "subtracting hours"))?
+            .map_err(|e| map_mitra_error(e, "subtracting hours"))?
     } else if let Some(m) = minutes {
         let m_i64 = m
             .try_into()
             .context("Minute value too large for subtraction")?;
         base_pdt
             .sub_duration(Duration::minutes(m_i64))
-            .map_err(|e| map_parsidate_error(e, "subtracting minutes"))?
+            .map_err(|e| map_mitra_error(e, "subtracting minutes"))?
     } else if let Some(s) = seconds {
         let s_i64 = s
             .try_into()
             .context("Second value too large for subtraction")?;
         base_pdt
             .sub_duration(Duration::seconds(s_i64))
-            .map_err(|e| map_parsidate_error(e, "subtracting seconds"))?
+            .map_err(|e| map_mitra_error(e, "subtracting seconds"))?
     } else {
         unreachable!();
     };
@@ -468,7 +468,7 @@ pub fn handle_diff(dt_str1: String, dt_str2: String) -> Result<()> {
     let days_diff = pdt1
         .date()
         .days_between(&pdt2.date())
-        .map_err(|e| map_parsidate_error(e, "calculating date difference"))?;
+        .map_err(|e| map_mitra_error(e, "calculating date difference"))?;
 
     println!("Difference: {} days", days_diff);
     Ok(())
@@ -484,7 +484,7 @@ pub fn handle_weekday(date_str: String) -> Result<()> {
     let weekday_name = pdt
         .date()
         .weekday()
-        .map_err(|e| map_parsidate_error(e, "getting weekday"))?;
+        .map_err(|e| map_mitra_error(e, "getting weekday"))?;
 
     println!("{}", weekday_name);
     Ok(())
@@ -498,7 +498,7 @@ pub fn handle_to_gregorian(parsi_dt_str: String) -> Result<()> {
     // Convert.
     let gregorian_ndt = pdt
         .to_gregorian()
-        .map_err(|e| map_parsidate_error(e, "converting to Gregorian"))?;
+        .map_err(|e| map_mitra_error(e, "converting to Gregorian"))?;
 
     // Print using standard Gregorian formats.
     if was_datetime {
@@ -536,7 +536,7 @@ pub fn handle_from_gregorian(gregorian_dt_str: String) -> Result<()> {
 
     // Convert the parsed Gregorian NaiveDateTime to ParsiDateTime.
     let parsi_pdt = ParsiDateTime::from_gregorian(gregorian_ndt)
-        .map_err(|e| map_parsidate_error(e, "converting from Gregorian"))?;
+        .map_err(|e| map_mitra_error(e, "converting from Gregorian"))?;
 
     // Print the result based on whether the input seemed like a datetime or just a date.
     print_result(parsi_pdt, was_datetime);
@@ -624,11 +624,11 @@ pub fn handle_parse(input_string: String, pattern: String) -> Result<()> {
 
     if expects_time {
         let parsed_dt = ParsiDateTime::parse(&input_string, &pattern)
-            .map_err(|e| map_parsidate_error(e, "parsing datetime with explicit format"))?;
+            .map_err(|e| map_mitra_error(e, "parsing datetime with explicit format"))?;
         println!("Parsed DateTime: {}", parsed_dt); // Use default Display
     } else {
         let parsed_d = ParsiDate::parse(&input_string, &pattern)
-            .map_err(|e| map_parsidate_error(e, "parsing date with explicit format"))?;
+            .map_err(|e| map_mitra_error(e, "parsing date with explicit format"))?;
         println!("Parsed Date: {}", parsed_d); // Use default Display
     }
     Ok(())
