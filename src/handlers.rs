@@ -14,7 +14,7 @@ use crate::events;
 use crate::utils::{map_mitra_error, parse_input_datetime_or_date, print_result};
 use anyhow::{Context, Result, bail};
 use chrono::Duration; // Use chrono::Duration for time arithmetic
-use mitra::{ParsiDate, ParsiDateTime};
+use parsidate::{ParsiDate, ParsiDateTime};
 use std::collections::VecDeque;
 
 // --- Helper Function to Generate Calendar Lines for a Single Month ---

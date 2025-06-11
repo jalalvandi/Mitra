@@ -11,7 +11,7 @@
 //! printing results consistently, and mapping errors.
 
 use anyhow::{Result, anyhow, bail};
-use mitra::{DateError, ParseErrorKind, ParsiDate, ParsiDateTime};
+use parsidate::{DateError, ParseErrorKind, ParsiDate, ParsiDateTime};
 
 /// Attempts to parse the input string first as a ParsiDateTime, then as a ParsiDate,
 /// trying common formats (slash-separated and ISO-like).
