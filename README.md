@@ -4,7 +4,7 @@
 [![CI](https://github.com/parsicore/mitra/actions/workflows/ci.yml/badge.svg)](https://github.com/parsicore/mitra/actions/workflows/ci.yml)
 ![Maintenance](https://img.shields.io/badge/maintained-actively-green)
 
-A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the zz [`mitra`](https://crates.io/crates/mitra) Rust library.
+A versatile command-line interface (CLI) tool for working with Persian (Jalali/Shamsi) dates and times, built upon the zz [`parsidate`](https://github.com/parsicore/parsidate) Rust library.
 
 Mitra allows you to perform common date/time operations directly from your terminal, including conversions, arithmetic, formatting, and retrieving detailed information.
 
@@ -475,10 +475,10 @@ mitra events 1403/07/10
 
 ## Dependencies
 
-*   **[`mitra`](https://crates.io/crates/mitra):** The core Rust library providing Persian date logic.
+*   **[`parsidate`](https://crates.io/crates/parsidate):** The core Rust library providing Persian date logic.
 *   **[`clap`](https://crates.io/crates/clap):** For command-line argument parsing.
 *   **[`anyhow`](https://crates.io/crates/anyhow):** For flexible error handling.
-*   **[`chrono`](https://crates.io/crates/chrono):** Used internally by `mitra` and for `Duration` handling.
+*   **[`chrono`](https://crates.io/crates/chrono):** Used internally by `parsidate` and for `Duration` handling.
 *   **[`serde`](https://crates.io/crates/serde) & [`serde_json`](https://crates.io/crates/serde_json):** For deserializing the event data from the embedded JSON file.
 *   **[`once_cell`](https://crates.io/crates/once_cell):** For lazy, static initialization of the event data, ensuring it's loaded only once.
 
