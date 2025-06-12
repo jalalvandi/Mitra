@@ -1,0 +1,13 @@
+# ~/mitra-core/Cargo.toml
+[package]
+name = "mitra-core"
+version = "2.3.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+chrono = "0.4"
+once_cell = "1.19"
+parsidate = "1.4.0" # Or your specific version
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
